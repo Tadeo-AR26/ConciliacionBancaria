@@ -73,10 +73,19 @@ class App:
 
             df_contabilidad_coloreado = pintar_contabilidad(df_contabilidad, referencias)
 
-            output_discrepancias = os.path.join(os.path.dirname(self.extracto_path), "Discrepancias.xlsx")
-            generar_discrepancias(df_extracto_coloreado, df_contabilidad_coloreado, output_discrepancias)
+            # Mostrar diálogo para seleccionar ubicación y nombre del archivo
+            output_discrepancias = filedialog.asksaveasfilename(
+                defaultextension=".xlsx",
+                filetypes=[("Excel files", "*.xlsx")],
+                title="Guardar archivo de discrepancias como..."
+            )
 
-            messagebox.showinfo("Éxito", f"Archivos procesados correctamente.\nDiscrepancias guardadas en:\n{output_discrepancias}")
+            # Verificamos que el usuario no haya cancelado
+            if output_discrepancias:
+                generar_discrepancias(df_extracto_coloreado, df_contabilidad_coloreado, output_discrepancias)
+
+                messagebox.showinfo("Éxito", f"Archivos procesados correctamente.\nDiscrepancias guardadas en:\n{output_discrepancias}")
+                
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error: {e}")
 
