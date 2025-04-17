@@ -1,6 +1,7 @@
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
+import re
 
 def pintar_extracto(df, referencias, nombre_archivo="extracto_coloreado.xlsx"):
     codigos = referencias['codigo']
@@ -24,11 +25,22 @@ def pintar_extracto(df, referencias, nombre_archivo="extracto_coloreado.xlsx"):
 
 
 def pintar_contabilidad(df, referencias, nombre_archivo="contabilidad_coloreado.xlsx"):
-    observaciones = [(obs.lower(), color) for obs, color in referencias['observacion'].items()]
+    # Convertimos los textos del diccionario de observaciones en expresiones regulares flexibles
+    patrones = []
+    for clave, color in referencias['observacion'].items():
+        # Escapamos cualquier carácter especial en la clave y la convertimos en una regex tipo .*clave.*
+        patron_regex = re.compile(rf".*{re.escape(clave)}.*", re.IGNORECASE)
+        patrones.append((patron_regex, color))
+
     colores = []
-    for observ in df['Observ.'].astype(str).str.lower():
-        color = next((c for o, c in observaciones if o in observ), "")
+    for observ in df['Observ.'].astype(str):
+        color = ""
+        for regex, c in patrones:
+            if regex.search(observ):
+                color = c
+                break
         colores.append(color)
+
     df['_color'] = colores
 
     # Guardamos a Excel

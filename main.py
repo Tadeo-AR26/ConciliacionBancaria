@@ -18,7 +18,7 @@ class App:
         self.root = root
         self.root.title("Conciliador Contable")
 
-        self.db_path = os.path.join(obtener_ruta_base(), "DB_Contabilidad (1).db")
+        self.db_path = os.path.join(obtener_ruta_base(), "DB_Contabilidad.db")
         self.bancos = obtener_bancos(self.db_path)
         self.banco = tk.StringVar()
         self.extracto_path = None
